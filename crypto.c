@@ -3,6 +3,12 @@
 #include <string.h>
 #include "crypto.h"
 
+#define BUFFER_SIZE 1024 // 定义缓冲区大小
+
+void print_error(const char* message) {
+    fprintf(stderr, "错误: %s\n", message);
+}
+
 int encrypt_file(const char* input_file, const char* output_file, int key) {
     FILE *in, *out;
     unsigned char buffer[BUFFER_SIZE];
@@ -31,6 +37,11 @@ int encrypt_file(const char* input_file, const char* output_file, int key) {
         fwrite(buffer, 1, bytes_read, out);
     }
 
+    // 检查文件读取是否出现错误
+    if (ferror(in)) {
+        print_error("读取输入文件时出现错误");
+    }
+
     fclose(in);
     fclose(out);
     return 0;
@@ -39,8 +50,4 @@ int encrypt_file(const char* input_file, const char* output_file, int key) {
 int decrypt_file(const char* input_file, const char* output_file, int key) {
     // 解密与加密使用相同的异或算法
     return encrypt_file(input_file, output_file, key);
-}
-
-void print_error(const char* message) {
-    fprintf(stderr, "错误: %s\n", message);
 }
